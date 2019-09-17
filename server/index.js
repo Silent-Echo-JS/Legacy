@@ -10,37 +10,19 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-const MySQLStore = require('express-mysql-session')(session);
 const parseurl = require('parseurl');
 const fileUpload = require('express-fileupload');// middleware that creates req.files object that contains files uploaded through frontend input
 const cloudinary = require('cloudinary').v2;// api for dealing with image DB, cloudinary
-const cloudinaryConfig = require('./config.js');// config file is gitignored b/c it holds API key. Won't appear in forked versions.
+const db = require('./models');
+const cloudinaryConfig = require('./config/cloudinary');// config file is gitignored b/c it holds API key. Won't appear in forked versions.
 const { convertToCoordinates } = require('../client/src/helpers/geoLocation');
 
 const {
-  findUser, getUser, saveUser, savePost, increasePostCount, saveUsersPostCount, searchTags, displayPosts, getPostInfo,
-} = require('./database/index.js');
-
-// options used in sessionStore below
-const options = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-};
-const sessionStore = new MySQLStore(options);
+  findUser, getUser, saveUser, savePost, increasePostCount,
+  saveUsersPostCount, searchTags, displayPosts, getPostInfo,
+} = require('./queries/index');
 
 cloudinary.config(cloudinaryConfig);// config object for connecting to cloudinary
-
-app.use(session({
-  secret: 'trashPanda secret',
-  // cookie: {
-  //   expires: 6000000,
-  // },
-  store: sessionStore,
-  resave: false,
-  saveUninitialized: false,
-}));
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -49,6 +31,15 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 app.use(fileUpload({
   useTempFiles: true,
 }));
+
+db.sequelize
+  .sync()
+  .then(() => {
+    console.log('Nice! Database looks fine');
+  })
+  .catch((err) => {
+    console.log(err, 'Something went wrong with the Database Update!');
+  });
 
 // for reqs from endpoint /posts on frontend. Fetches posts from db and passes them to client to display on page
 app.get('/posts', (req, res) => {
