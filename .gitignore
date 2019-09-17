@@ -69,3 +69,5 @@ server/config.js
 
 # debugger
 .vscode/launch.json
+
+server/config
