@@ -4,6 +4,7 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const PORT = process.env.PORT || 8080;
 const bodyParser = require('body-parser');
@@ -13,7 +14,7 @@ const app = express();
 const parseurl = require('parseurl');
 const fileUpload = require('express-fileupload');// middleware that creates req.files object that contains files uploaded through frontend input
 const cloudinary = require('cloudinary').v2;// api for dealing with image DB, cloudinary
-const db = require('./models');
+const sequelize = require('./models');
 const cloudinaryConfig = require('./config/cloudinary');// config file is gitignored b/c it holds API key. Won't appear in forked versions.
 const { convertToCoordinates } = require('../client/src/helpers/geoLocation');
 
@@ -27,13 +28,20 @@ cloudinary.config(cloudinaryConfig);// config object for connecting to cloudinar
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(session({
+  secret: 'keyboard cat',
+  store: new SequelizeStore({
+    db: sequelize,
+  }),
+  resave: false, // we support the touch method so per the express-session docs this should be set to false
+}));
 app.use(express.static(path.join(__dirname, '../client/dist')));
 app.use(fileUpload({
   useTempFiles: true,
 }));
 
-db.sequelize
-  .sync()
+sequelize
+  .sync({ force: true })
   .then(() => {
     console.log('Nice! Database looks fine');
   })
