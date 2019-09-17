@@ -1,4 +1,4 @@
--- DROP DATABASE IF EXISTS trashPanda;
+DROP DATABASE IF EXISTS trashPanda;
 
 CREATE DATABASE trashPanda;
 
@@ -17,6 +17,8 @@ CREATE TABLE posts (
   postId INT NOT NULL AUTO_INCREMENT,
   text varchar (255), 
   img1 varchar (255) NOT NULL,
+  img2 varchar (255) NOT NULL,
+  img3 varchar (255) NOT NULL,
   title varchar (50),
   location varchar (255),
   tagList varchar (150),
