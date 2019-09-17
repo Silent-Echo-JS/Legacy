@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const Users = sequelize.define('user', {
+  return sequelize.define('Users', {
     userId: {
       autoIncrement: true,
       primaryKey: true,
@@ -10,5 +10,4 @@ module.exports = function (sequelize, Sequelize) {
     email: { type: Sequelize.STRING, allowNull: false },
     business: { type: Sequelize.STRING },
   });
-  return Users;
 };
