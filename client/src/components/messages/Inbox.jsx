@@ -14,6 +14,7 @@ class Inbox extends React.Component {
     super(props);
 
     this.state = {
+      sender: '',
       messages: this.props.messages,
       modal: false
     };
@@ -33,6 +34,13 @@ class Inbox extends React.Component {
       .catch(err => alert(err));
   }
 
+  getSender() {
+    axios.get('/sender')
+    .then(res => {
+      this.setState({ sender: res.sender })
+    })
+  }
+
   toggle() {
     this.setState(prevState => ({
       modal: !prevState.modal
@@ -41,6 +49,7 @@ class Inbox extends React.Component {
 
   render() {
     const { messages } = this.state;
+    const { sender } = this.state;
     console.log(messages, 'messages inside of inbox');
     return (
       <div>
@@ -53,7 +62,7 @@ class Inbox extends React.Component {
               <ListGroup style={{textAlign: 'left'}}>
                 <ListGroupItem onClick={this.toggle} action>
                   <ListGroupItemHeading>
-                    From: {message.sender_id}
+                    From: {sender}
                   </ListGroupItemHeading>
                   <ListGroupItemText>
                     Subject: {message.subject}
