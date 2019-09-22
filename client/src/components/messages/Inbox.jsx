@@ -14,8 +14,8 @@ class Inbox extends React.Component {
     super(props);
 
     this.state = {
-      sender: '',
-      messages: this.props.messages,
+      sender: [],
+      messages: [],
       modal: false
     };
     this.toggle = this.toggle.bind(this);
@@ -23,6 +23,7 @@ class Inbox extends React.Component {
 
   componentDidMount() {
     this.getMessages();
+    this.getSender();
   }
 
   getMessages() {
@@ -35,10 +36,14 @@ class Inbox extends React.Component {
   }
 
   getSender() {
-    axios.get('/sender')
-    .then(res => {
-      this.setState({ sender: res.sender })
-    })
+    axios
+      .get('/sender')
+      .then(res => {
+        console.log(res.data);
+        this.setState({ sender: res.data });
+        console.log(this.sender)
+      })
+      .catch(err => alert(err));
   }
 
   toggle() {
@@ -50,7 +55,6 @@ class Inbox extends React.Component {
   render() {
     const { messages } = this.state;
     const { sender } = this.state;
-    console.log(messages, 'messages inside of inbox');
     return (
       <div>
           <div style={pageHeader}><h2>Messages</h2></div>
@@ -63,7 +67,7 @@ class Inbox extends React.Component {
 
                         <ListGroupItem onClick={this.toggle} action>
                           <ListGroupItemHeading>
-                            From: {message.sender_id}
+                            From: {sender.username}
                           </ListGroupItemHeading>
 
                           <ListGroupItemText>

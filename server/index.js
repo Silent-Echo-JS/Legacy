@@ -18,7 +18,7 @@ const cloudinaryConfig = require('./config.js');// config file is gitignored b/c
 const { convertToCoordinates, convertToAddress } = require('../client/src/helpers/geoLocation');
 
 const {
-  saveMessage, findUser, getUser, saveUser, savePost, getPostInfo, getMessages,
+  saveMessage, findUser, getUser, saveUser, savePost, getPostInfo, getMessages, getSender,
   increasePostCount, saveUsersPostCount, searchTags, displayPosts, searchZip, getMyPosts, deletePost,
 } = require('./database/index.js');
 
@@ -336,8 +336,17 @@ app.post('/deletePost', (req, res) => {
 app.get('/inbox', (req, res) => {
   getMessages(req.session.user_id)
     .then((messages) => {
-      console.log(messages, 'messages');
       res.send(messages);
+    })
+    .catch((error) => {
+      res.status(500).send(error);
+    });
+});
+
+app.get('/sender', (req, res) => {
+  getSender(req.session.user_id)
+    .then((sender) => {
+      res.send(sender);
     })
     .catch((error) => {
       res.status(500).send(error);
