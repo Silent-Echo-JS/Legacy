@@ -1,13 +1,6 @@
 import React from 'react';
 import { Button, Card, CardBody, CardHeader, CardTitle } from 'reactstrap';
 
-// class SelectMessage extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-      
-//     };
-//   }
 const SelectMessage = (props) => {
   const { messages } = props;
 
@@ -23,7 +16,5 @@ const SelectMessage = (props) => {
       </div>
     );
   }
-
-
 
 export default SelectMessage;

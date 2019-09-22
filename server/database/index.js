@@ -142,10 +142,19 @@ const searchZip = (tag) => new Promise((resolve, reject) => {
 
 // gets user's inbox messages from db
 const getMessages = (user) => new Promise((resolve, reject) => {
-
   const inbox = `SELECT * FROM messages WHERE recepient_id= "${user}"`;
 
   databaseConnection.query(inbox, (err, results) => {
+    if (err) {
+      return reject(err);
+    }
+    return resolve(results);
+  });
+});
+
+const getSender = (sender) => new Promise((resolve, reject) => {
+  const senderName = `SELECT username FROM users WHERE user_id= "${sender}"`;
+  databaseConnection.query(senderName, (err, results) => {
     if (err) {
       return reject(err);
     }
@@ -205,4 +214,5 @@ module.exports = {
   getMessages,
   getMyPosts,
   getPostInfo,
+  getSender,
 };
